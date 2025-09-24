@@ -1,0 +1,38 @@
+{
+  "name": "3section-b",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.15.1",
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "geoip-lite": "^1.4.10",
+    "helmet": "^8.1.0",
+    "mongoose": "^8.18.1",
+    "morgan": "^1.10.1",
+    "ua-parser-js": "^2.0.5",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/geoip-lite": "^1.4.4",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.5.2",
+    "@types/ua-parser-js": "^0.7.39",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
