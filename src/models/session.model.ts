@@ -33,5 +33,10 @@ const SessionSchema = new Schema({
     actions:{type:[ActionSchema],default:[]}
 },{timestamps:true});
 
+SessionSchema.index({createdAt: -1});
+SessionSchema.index({updatedAt: -1});
+SessionSchema.index({ip: 1});
+SessionSchema.index({"actions.event": 1});
+
 export type SessionDoc = InferSchemaType<typeof SessionSchema>;
 export const Session = model("Session",SessionSchema);
