@@ -7,6 +7,7 @@ import {
     analyticsActions,
     analyticsStream,
  } from "../controllers/analytics.controller";
+ import { campaignsOverview, campaignDetail } from "../controllers/campaigns.controller";
 
  const router = Router();
 
@@ -15,5 +16,8 @@ import {
  router.get("/devices", analyticsDevices);
  router.get("/actions", analyticsActions);
  router.get("/stream",analyticsStream);
+
+ router.get("/campaigns/overview", campaignsOverview);
+ router.get("/campaigns/detail", campaignDetail);
 
  export default router;
