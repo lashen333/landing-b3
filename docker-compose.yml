@@ -1,14 +1,11 @@
 version: "3.8"
 services:
   backend:
-    build: .
+    image: bns-backend:latest
     container_name: landing-bNs
     ports:
-      - "5070:5000"
-    environment:
-      - NODE_ENV=development
-      - PORT=5000
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -lc "corepack enable && pnpm i && pnpm dev"
+      - "5070:4000"
+    env_file:
+      - .env
+    restart: unless-stopped
+

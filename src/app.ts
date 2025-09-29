@@ -9,6 +9,7 @@ import {env} from "./config/env";
 import{notFound} from "./middlewares/notFound";
 import { errorHandler } from "./middlewares/error";
 import analyticsRoutes from "./routes/analytics.routes"; 
+import router from "./routes/healthRoute";
 
 const app = express();
 
@@ -24,12 +25,15 @@ app.use(cors({
     credentials:false
 }));
 
-app.get("/api/health",(_req,res)=>{
-    res.json({ok:true,service:"backend",time:new Date().toISOString()});
+// LOG EVERY REQUEST
+app.use((req, _res, next) => {
+  console.log(`📥 ${req.method} ${req.url}`);
+  next();
 });
 
 app.use("/api",sessionRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/", router);
 
 app.use(notFound);
 app.use(errorHandler);
