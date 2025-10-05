@@ -30,7 +30,11 @@ const SessionSchema = new Schema({
     referrer:{type:String},
 
     startTime:{type:Date,default:()=>new Date()},
-    actions:{type:[ActionSchema],default:[]}
+    actions:{type:[ActionSchema],default:[]},
+
+    //variants
+    variantId: {type: Schema.Types.ObjectId, ref: "Variant"},
+    variantName: {type: String},
 },{timestamps:true});
 
 SessionSchema.index({createdAt: -1});
@@ -39,6 +43,7 @@ SessionSchema.index({ip: 1});
 SessionSchema.index({utm_source: 1 });
 SessionSchema.index({ utm_campaign: 1});
 SessionSchema.index({"actions.event": 1, "actions.section": 1 });
+SessionSchema.index({ variantId: 1});
 
 export type SessionDoc = InferSchemaType<typeof SessionSchema>;
 export const Session = model("Session",SessionSchema);

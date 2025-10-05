@@ -26,7 +26,7 @@ export const SessionStartBodySchema = z.object({
 export const SessionStartResponseSchema = z.object({
     ok:z.literal(true),
     session:z.object({
-        SessionId:z.string(),
+        sessionId:z.string(),
         location:z.string().optional().nullable(),
         device:z.string().optional().nullable(),
     }),

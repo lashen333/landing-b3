@@ -8,7 +8,8 @@ import sessionRoutes from "./routes/session.routes";
 import {env} from "./config/env";
 import{notFound} from "./middlewares/notFound";
 import { errorHandler } from "./middlewares/error";
-import analyticsRoutes from "./routes/analytics.routes"; 
+import analyticsRoutes from "./routes/analytics.routes";
+import variantRoutes from "./routes/variant.routes"; 
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.get("/api/health",(_req,res)=>{
 
 app.use("/api",sessionRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/variants", variantRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

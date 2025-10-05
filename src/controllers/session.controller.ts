@@ -21,7 +21,7 @@ export async function startSession(
   req: Request<any, any, SessionStartBody>,   // avoids ParamsDictionary import
   res: Response
 ) {
-  const { sessionId, utm, pageUrl, referrer } = req.body || {};
+  const { sessionId, utm, pageUrl, referrer, variant } = (req.body ?? {}) as any;
   if (!sessionId) return res.status(400).json({ ok: false, message: "sessionId required" });
 
   const ua = req.get("user-agent") ?? "";
@@ -38,24 +38,32 @@ export async function startSession(
     }
   } catch {}
 
+  const update = {
+    $setOnInsert:{ sessionId, startTime: new Date() },
+    $set:{
+      // UTM fields 
+      utm_source:   utm?.utm_source ?? null,
+      utm_medium:   utm?.utm_medium ?? null,
+      utm_campaign: utm?.utm_campaign ?? null,
+      utm_content:  utm?.utm_content ?? null,
+      utm_term:     utm?.utm_term ?? null,
+
+      // NEW: accept either nested { variant: {_id, name} } or legacy variantId/variantName on body
+      variantId:   variant?._id   ?? (req.body as any)?.variantId   ?? null,
+      variantName: variant?.name  ?? (req.body as any)?.variantName ?? null,
+
+      device: deviceType,
+      userAgent: ua,
+      ip,
+      location,
+      pageUrl: pageUrl ?? null,
+      referrer: referrer ?? null,
+    }
+  };
+
   const doc = await Session.findOneAndUpdate(
     { sessionId },
-    {
-      $setOnInsert: { sessionId, startTime: new Date() },
-      $set: {
-        utm_source:   utm?.utm_source ?? null,
-        utm_medium:   utm?.utm_medium ?? null,
-        utm_campaign: utm?.utm_campaign ?? null,
-        utm_content:  utm?.utm_content ?? null,
-        utm_term:     utm?.utm_term ?? null,
-        device: deviceType,
-        userAgent: ua,
-        ip,
-        location,
-        pageUrl: pageUrl ?? null,
-        referrer: referrer ?? null,
-      },
-    },
+    update,
     { upsert: true, new: true }
   ).lean();
 
