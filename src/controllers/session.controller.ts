@@ -1,8 +1,6 @@
 // src\controllers\session.controller.ts
 import type { Request, Response } from "express";
-import { Session } from "../models/session.model.js";
-import {UAParser} from "ua-parser-js";       // needs esModuleInterop true
-import geoip from "geoip-lite";
+import { Session } from "../models/session.model";
 import { sendValidated } from "../middlewares/validate";
 import {
   SessionStartResponseSchema,
@@ -11,6 +9,12 @@ import {
   AppendActionsBodySchema,
   AppendActionsResponseSchema,
 } from "../schemas/session.schema";
+import { lookupGeoImproved } from "../services/geoService";
+import { getDeviceInfo } from "../utils/device";
+
+// helper
+const makeLocationString = (city?: string, country?: string) =>
+  [city, country].filter(Boolean).join(", ");
 
 function getClientIp(req: Request) {
   const xfwd = (req.headers["x-forwarded-for"] as string) || "";
@@ -21,22 +25,20 @@ export async function startSession(
   req: Request<any, any, SessionStartBody>,   // avoids ParamsDictionary import
   res: Response
 ) {
-  const { sessionId, utm, pageUrl, referrer, variant } = (req.body ?? {}) as any;
+  const { sessionId, utm, pageUrl, referrer, variant, lat, lon } = (req.body ?? {}) as any;
   if (!sessionId) return res.status(400).json({ ok: false, message: "sessionId required" });
 
-  const ua = req.get("user-agent") ?? "";
-  const parsed = new UAParser(ua).getResult();
-  const deviceType = parsed.device.type || (parsed.device.vendor ? "device" : "unknown");
+  // Device parsing
+  const ua = req.get("User-Agent") || "";
+  const { deviceType, os, browser, device } = getDeviceInfo(ua);
 
+  //geo
   const ip = getClientIp(req);
-  let location = "Unknown";
-  try {
-    const geo = ip && geoip.lookup(ip);
-    if (geo) {
-      const city = Array.isArray(geo.city) ? geo.city[0] : geo.city;
-      location = [city || null, geo.country].filter(Boolean).join(", ");
-    }
-  } catch {}
+  const geo = await lookupGeoImproved(ip, lat, lon);
+  const country = geo.country || undefined;
+  const city = geo.city || undefined;
+  const region = geo.region || undefined;
+  const locStr = makeLocationString(city, country);
 
   const update = {
     $setOnInsert:{ sessionId, startTime: new Date() },
@@ -54,8 +56,21 @@ export async function startSession(
 
       device: deviceType,
       userAgent: ua,
+      osName: os.name ?? undefined,
+      osVersion: os.version ?? undefined,
+      browserName: browser.name ?? undefined,
+      browserVersion: browser.version ?? undefined,
+      deviceVendor: device.vendor ?? undefined,
+      deviceModel: device.model ?? undefined,
+
+      //Geo
       ip,
-      location,
+      location: locStr || "Unknown",
+      country, city, region,
+      lat: typeof geo.lat === "number" ? geo.lat : undefined,
+      lon: typeof geo.lon === "number" ? geo.lon : undefined,
+      geoMethod: geo.method,
+
       pageUrl: pageUrl ?? null,
       referrer: referrer ?? null,
     }
@@ -128,4 +143,32 @@ export async function appendActions(
         {ok:true,appended:normalized.length},
         200
     );
+}
+export async function updateGeo(req: Request<{ sessionId: string }, unknown, { lat: number; lon: number }>, res: Response) {
+  const { sessionId } = req.params;
+  const { lat, lon } = req.body ?? {};
+  if (!sessionId || typeof lat !== "number" || typeof lon !== "number") {
+    return res.status(400).json({ ok:false, error:"Invalid body" });
+  }
+  const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim()
+    || (req.socket?.remoteAddress ?? "");
+  const geo = await lookupGeoImproved(ip, lat, lon);
+  const location = makeLocationString(geo.city, geo.country);
+
+  const doc = await Session.findOneAndUpdate(
+    { sessionId },
+    {
+      $set: {
+        country: geo.country || undefined,
+        city: geo.city || undefined,
+        region: geo.region || undefined,
+        lat: geo.lat,
+        lon: geo.lon,
+        geoMethod: geo.method,
+        location: location || undefined,
+      }
+    },
+    { new: true }
+  );
+  return res.json({ ok:true, session: { sessionId: doc?.sessionId, location: doc?.location, geoMethod: doc?.geoMethod } });
 }

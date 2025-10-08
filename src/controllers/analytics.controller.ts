@@ -191,7 +191,27 @@ async function fetchOverviewMinimal() {
     }
   };
 }
-
+export async function analyticsGeoPoints(_req: Request, res: Response) {
+  const points = await Session.aggregate([
+    { $match: { lat: { $type: "number" }, lon: { $type: "number" } } },
+    { $group: {
+        _id: { country: "$country", city: "$city", lat: "$lat", lon: "$lon" },
+        sessions: { $sum: 1 },
+        ips: { $addToSet: { $ifNull: ["$ip", ""] } }
+    }},
+    { $project: {
+        _id: 0,
+        country: "$_id.country",
+        city: "$_id.city",
+        lat: "$_id.lat",
+        lon: "$_id.lon",
+        sessions: 1,
+        users: { $size: "$ips" }
+    }},
+    { $sort: { sessions: -1 } }
+  ]);
+  return res.json({ ok: true, points });
+}
 
 
 

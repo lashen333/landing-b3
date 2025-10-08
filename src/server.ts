@@ -5,8 +5,10 @@ import {env} from "./config/env";
 
 async function main(){
     await connectDB();
-    app.listen(env.PORT,()=>{
-        console.log(`API listening on http://localhost:${env.PORT} `)
+
+    const PORT = Number(process.env.PORT || env.PORT || 4000);
+    app.listen(PORT,"0.0.0.0" , ()=>{
+        console.log(`API listening on port ${PORT} `)
     });
 }
 main().catch((err) =>{

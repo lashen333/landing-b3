@@ -6,6 +6,7 @@ import {
     analyticsDevices,
     analyticsActions,
     analyticsStream,
+    analyticsGeoPoints
  } from "../controllers/analytics.controller";
  import { campaignsOverview, campaignDetail } from "../controllers/campaigns.controller";
 
@@ -13,6 +14,7 @@ import {
 
  router.get("/overview", analyticsOverview);
  router.get("/geo", analyticsGeo);
+ router.get("/geo/points", analyticsGeoPoints);
  router.get("/devices", analyticsDevices);
  router.get("/actions", analyticsActions);
  router.get("/stream",analyticsStream);

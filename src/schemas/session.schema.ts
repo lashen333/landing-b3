@@ -1,7 +1,6 @@
 // src\schemas\session.schema.ts
 import {z} from "zod";
-import { Session } from "../models/session.model";
-import { timeStamp } from "console";
+
 
 //Reusable helper
 const stringOrUndef = z.string().trim().min(1).max(200).optional();
@@ -22,6 +21,20 @@ export const SessionStartBodySchema = z.object({
     referrer:z.string().url().optional(),
     
 });
+
+export const SessionStartBodyExtendedSchema = SessionStartBodySchema.extend({
+    variant:z
+        .object({
+            _id: z.string().optional(),
+            name: z.string().optional(),
+        })
+        .optional(),
+
+        variantId: z.string().nullable().optional(),
+        variantName: z.string().nullable().optional(),
+        lat: z.number().optional(),
+        lon: z.number().optional(),
+    });
 
 export const SessionStartResponseSchema = z.object({
     ok:z.literal(true),
@@ -46,6 +59,8 @@ export const ErrorResponseSchema = z.object({
 });
 
 export type SessionStartBody = z.infer<typeof SessionStartBodySchema>;
+
+export type SessionStartBodyExtended = z.infer<typeof SessionStartBodyExtendedSchema>;
 
 export const ActionEventEnum = z.enum([
     "CTA_Click",
