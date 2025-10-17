@@ -1,4 +1,4 @@
-// src/schemas/variant.schema.ts
+// src\schemas\variant.schema.ts
 import { z } from "zod";
 
 // Accept http(s) URLs, /relative, or #anchor

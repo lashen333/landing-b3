@@ -20,11 +20,13 @@ const SessionSchema = new Schema({
 
     //geo
     country: { type: String },
+    countryCode: { type: String },
     city: { type: String },
     region: { type: String },
     lat: { type: Number },
     lon: { type: Number },
     geoMethod: { type: String },
+    
 
     //Env
     device:{type:String},
@@ -60,6 +62,7 @@ SessionSchema.index({utm_source: 1 });
 SessionSchema.index({ utm_campaign: 1});
 SessionSchema.index({"actions.event": 1, "actions.section": 1 });
 SessionSchema.index({ variantId: 1});
+SessionSchema.index({ countryCode: 1});
 SessionSchema.index({ lat: 1, lon: 1 });
 
 export type SessionDoc = InferSchemaType<typeof SessionSchema>;
