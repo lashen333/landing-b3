@@ -2,12 +2,12 @@
 import {Router} from "express";
 import {startSession,appendActions, updateGeo} from "../controllers/session.controller";
 import { validateBody } from "../middlewares/validate";
-import { SessionStartBodySchema, AppendActionsBodySchema } from "../schemas/session.schema";
+import { SessionStartBodyExtendedSchema, AppendActionsBodySchema, UpdateGeoBodySchema } from "../schemas/session.schema";
 
 const router =Router();
 router.post(
     "/sessions/start",
-    validateBody(SessionStartBodySchema),
+    validateBody(SessionStartBodyExtendedSchema),
     startSession);
 
 router.post(
@@ -16,17 +16,9 @@ router.post(
     appendActions
 );
 
-router.post("/sessions/:sessionId/geo", validateBody(
-  // inline zod-lite; or create schema file
-  // expecting { lat:number, lon:number }
-  // If you already have a validateBody util with zod, use it here.
-  // @ts-ignore minimal validator
-  {
-    parse: (b: any) => {
-      if (typeof b?.lat !== "number" || typeof b?.lon !== "number") throw new Error("Invalid");
-      return b;
-    }
-  }
-), updateGeo);
+router.post("/sessions/:sessionId/geo", 
+  validateBody(UpdateGeoBodySchema),
+  updateGeo
+);
 
 export default router;

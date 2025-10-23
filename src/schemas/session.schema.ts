@@ -35,6 +35,10 @@ export const SessionStartBodyExtendedSchema = SessionStartBodySchema.extend({
         lat: z.number().optional(),
         lon: z.number().optional(),
     });
+export const UpdateGeoBodySchema = z.object({
+    lat:z.number(),
+    lon:z.number(),
+});
 
 export const SessionStartResponseSchema = z.object({
     ok:z.literal(true),

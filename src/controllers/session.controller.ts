@@ -1,4 +1,4 @@
-// src/controllers/session.controller.ts
+// src\controllers\session.controller.ts
 import type { Request, Response } from "express";
 import { Session } from "../models/session.model";
 import { sendValidated } from "../middlewares/validate";

@@ -1,6 +1,7 @@
+// src\middlewares\validate.ts
 import type { NextFunction, Request, Response } from "express";
 import { z, type ZodIssue, type ZodTypeAny } from "zod";
-import { ErrorResponseSchema } from "../schemas/session.schema.js";
+import { ErrorResponseSchema } from "../schemas/session.schema";
 
 export function validateBody(schema: ZodTypeAny) {
   return (req: Request, res: Response, next: NextFunction) => {
