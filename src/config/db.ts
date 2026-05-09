@@ -1,6 +1,6 @@
 // src\config\db.ts
 import mongoose from "mongoose";
-import {env} from "./env";
+import {env} from "./env.js";
 
 export async function connectDB(){
     if(!env.MONGODB_URI)throw new Error("MONGODB_URI missing");

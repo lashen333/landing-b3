@@ -1,8 +1,8 @@
 // src\routes\session.routes.ts
 import {Router} from "express";
-import {startSession,appendActions, updateGeo} from "../controllers/session.controller";
-import { validateBody } from "../middlewares/validate";
-import { SessionStartBodyExtendedSchema, AppendActionsBodySchema, UpdateGeoBodySchema } from "../schemas/session.schema";
+import {startSession,appendActions, updateGeo} from "../controllers/session.controller.js";
+import { validateBody } from "../middlewares/validate.js";
+import { SessionStartBodyExtendedSchema, AppendActionsBodySchema, UpdateGeoBodySchema } from "../schemas/session.schema.js";
 
 const router =Router();
 router.post(

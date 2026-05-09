@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "module": "Node16",              // ← was "CommonJS"
-    "moduleResolution": "Node16",    // ← was "node"
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",              // ← was "CommonJS" //if error change to "Node16"
+    "moduleResolution": "NodeNext",    // ← was "node" //if error change to "Node16"
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,

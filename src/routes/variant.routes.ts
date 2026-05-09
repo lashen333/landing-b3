@@ -1,8 +1,8 @@
 // src\routes\variant.routes.ts
 import {Router} from "express";
-import {createVariant, listVariants, updateVariant, deleteVariant, assignVariant, variantsOverview} from "../controllers/variant.controller";
-import {validateBody} from "../middlewares/validate";
-import {CreateVariantBodySchema, UpdateVariantBodySchema, AssignVariantBodySchema} from "../schemas/variant.schema";
+import {createVariant, listVariants, updateVariant, deleteVariant, assignVariant, variantsOverview} from "../controllers/variant.controller.js";
+import {validateBody} from "../middlewares/validate.js";
+import {CreateVariantBodySchema, UpdateVariantBodySchema, AssignVariantBodySchema} from "../schemas/variant.schema.js";
 
 const router = Router();
 

@@ -1,10 +1,10 @@
 // src\middlewares\validate.ts
 import type { NextFunction, Request, Response } from "express";
 import { z, type ZodIssue, type ZodTypeAny } from "zod";
-import { ErrorResponseSchema } from "../schemas/session.schema";
+import { ErrorResponseSchema } from "../schemas/session.schema.js";
 
 export function validateBody(schema: ZodTypeAny) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {  //check the incoming req.body and match the Zod schema and runs before controller
     const parsed = schema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -26,6 +26,31 @@ export function validateBody(schema: ZodTypeAny) {
     next();
   };
 }
+
+
+export function validateParams(schema: ZodTypeAny) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const parsed = schema.safeParse(req.params);
+
+    if (!parsed.success) {
+      const issues = parsed.error.issues.map((i: ZodIssue) => ({
+        path: i.path as (string | number)[],
+        message: i.message,
+      }));
+
+      const payload = { ok: false as const, error: "ValidationError", issues };
+
+      // Reuse your same error schema for consistent shape
+      const safe = ErrorResponseSchema.parse(payload);
+      return res.status(400).json(safe);
+    }
+
+    // Attach the parsed params (e.g., id: string)
+    req.params = parsed.data as any;
+    next();
+  };
+}
+
 
 export function sendValidated<T extends z.ZodTypeAny>(
   res: Response,

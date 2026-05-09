@@ -1,7 +1,7 @@
 // src\server.ts
-import app from "./app";
-import {connectDB} from "./config/db";
-import {env} from "./config/env";
+import app from "./app.js";
+import {connectDB} from "./config/db.js";
+import {env} from "./config/env.js";
 
 async function main(){
     await connectDB();

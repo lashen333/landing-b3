@@ -1,5 +1,5 @@
 // src\services\geoService.ts
-import { env } from "../config/env";
+import { env } from "../config/env.js";
 
 type GeoResult = {
   country?: string;

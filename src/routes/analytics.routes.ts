@@ -7,8 +7,8 @@ import {
     analyticsActions,
     analyticsStream,
     analyticsGeoPoints
- } from "../controllers/analytics.controller";
- import { campaignsOverview, campaignDetail } from "../controllers/campaigns.controller";
+ } from "../controllers/analytics.controller.js";
+ import { campaignsOverview, campaignDetail } from "../controllers/campaigns.controller.js";
 
  const router = Router();
 
